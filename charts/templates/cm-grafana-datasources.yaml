@@ -1,0 +1,18 @@
+---
+{{- if (.Values.grafana.enabled) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.grafana.fullnameOverride }}-datasource
+  labels:
+    grafana_datasource: "1"
+data:
+  loki-stack-datasource.yaml: |-
+    apiVersion: 1
+    datasources:
+    - name: Loki
+      type: loki
+      access: proxy
+      url: {{ .Values.grafana.lokiQueryUrl }}
+      version: 1
+{{- end }}
