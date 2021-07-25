@@ -105,7 +105,7 @@ metadata:
     app.kubernetes.io/component: gateway
 stringData:
   .htpasswd: |
-    willchange:$2a$10$.CkwaVGfCV5jald1t9ML7uNwrEYqgo3WsmtEKmKGCrRkQc0jtOsAu
+    willchange:$2a$10$dgyIhAok8z7NQ9LEpa3Vme8NWiFb2Xzx8SrWGlxqndVad3a1DOWLe
 ---
 # Source: helm-loki/charts/loki-distributed/templates/configmap.yaml
 apiVersion: v1
@@ -846,6 +846,9 @@ spec:
             - name: http-memberlist
               containerPort: 7946
               protocol: TCP
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /etc/secrets/key.json
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -863,6 +866,8 @@ spec:
               mountPath: /etc/loki/config
             - name: data
               mountPath: /var/loki
+            - mountPath: /etc/secrets
+              name: loki-access-gcs
           resources:
             {}
       affinity:
@@ -888,6 +893,9 @@ spec:
         - name: config
           configMap:
             name: loki-applog-xxx
+        - name: loki-access-gcs
+          secret:
+            secretName: loki-gcs-bucket-key
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -959,6 +967,9 @@ spec:
             - name: http-memberlist
               containerPort: 7946
               protocol: TCP
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /etc/secrets/key.json
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -976,6 +987,8 @@ spec:
               mountPath: /etc/loki/config
             - name: data
               mountPath: /var/loki
+            - mountPath: /etc/secrets
+              name: loki-access-gcs
           resources:
             {}
       affinity:
@@ -1001,6 +1014,9 @@ spec:
         - name: config
           configMap:
             name: loki-applog-xxx
+        - name: loki-access-gcs
+          secret:
+            secretName: loki-gcs-bucket-key
   volumeClaimTemplates:
     - metadata:
         name: data

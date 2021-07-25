@@ -104,6 +104,7 @@ loki-distributed:
     s3Bucket: willchangepwdbb
     s3Url: https://minio.minio-applog-a.svc.cluster.local
     gcsBucket: gcsbucketnamehere
+    gcsKeySecretName: loki-access-gcs-here
 
   ingester:
     replicas: 3
@@ -115,7 +116,7 @@ loki-distributed:
     persistence:
       enabled: true
 
-  loki:
+  loki:    
     image:
       tag: 2.2.0
     config: |
