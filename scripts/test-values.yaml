@@ -2,15 +2,15 @@
 exposes:
   domain: gce-rke-demo.its-software-services.com
   issuer: lets-encrypt-issuer
-  ingresses:
-  - createCert: false
+  ingressesXXX:
+  - createCert: true
     name: grfna-applog
     service:
       name: grafana
       port:
         number: 80
 
-  - createCert: true
+  - createCert: false
     name: grfna-syslog
     service:
       name: grafana
@@ -34,7 +34,7 @@ promtail:
     lokiAddress: https://loki-gateway/loki/api/v1/push
 
 loki-distributed:
-  enabled: false
+  enabled: true
   fullnameOverride: loki-applog-xxx
 
   gateway:
@@ -44,10 +44,12 @@ loki-distributed:
       password: willchangepwd
 
   customParams:
+    backendStorageType: gcs
     s3User: willchange
     s3Password: willchangepwd
     s3Bucket: willchangepwdbb
     s3Url: https://bucket.minio-applog-a.svc.cluster.local
+    gcsBucket: loki-syslog
 
 #Loki stack fro cluster container logs
 loki-stack:

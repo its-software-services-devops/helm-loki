@@ -1,0 +1,27 @@
+---
+exposes:
+  domain: gce-rke-demo.its-software-services.com
+  issuer: lets-encrypt-issuer
+  ingresses: []
+
+#Loki stack fro cluster container logs
+loki-stack:
+  enabled: true
+  nameOverride: loki-cluster-logging
+
+  grafana:
+    enabled: true
+    envRenderSecret:
+      LDAP_ADMIN_USER: "will-change"
+      LDAP_ADMIN_PASSWORD: "will-change"
+
+    image:
+      tag: 7.5.7
+
+    sidecar:
+      datasources:
+        enabled: true
+      image:
+        repository: quay.io/kiwigrid/k8s-sidecar
+        tag: 1.12.22
+        sha: "ssss"

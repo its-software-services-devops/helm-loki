@@ -98,10 +98,12 @@ loki-distributed:
       password: willchangepwd
 
   customParams:
+    backendStorageType: s3 #Support backend now are 's3' and 'gcs'
     s3User: willchange
     s3Password: willchangepwd
     s3Bucket: willchangepwdbb
     s3Url: https://minio.minio-applog-a.svc.cluster.local
+    gcsBucket: gcsbucketnamehere
 
   ingester:
     replicas: 3
@@ -147,12 +149,17 @@ loki-distributed:
           configs:
             - from: 2020-09-07
               store: boltdb-shipper
+              {{- if (eq .Values.customParams.backendStorageType "s3") }}
               object_store: aws
+              {{- else }}
+              object_store: gcs
+              {{- end }}
               schema: v11
               index:
                 prefix: loki_index_
                 period: 24h
         storage_config:
+          {{- if (eq .Values.customParams.backendStorageType "s3") }}
           aws:
             s3: {{ .Values.customParams.s3Url }}/{{ .Values.customParams.s3Bucket }}
             s3forcepathstyle: true
@@ -160,11 +167,19 @@ loki-distributed:
             secret_access_key: {{ .Values.customParams.s3Password }}
             http_config:
               insecure_skip_verify: true
+          {{- else }}
+          gcs:
+            bucket_name: {{ .Values.customParams.gcsBucket }}
+          {{- end }}
           boltdb_shipper:
             active_index_directory: /var/loki/boltdb-shipper-active
             cache_location: /var/loki/boltdb-shipper-cache
             cache_ttl: 24h
+            {{- if (eq .Values.customParams.backendStorageType "s3") }}
             shared_store: s3
+            {{- else }}
+            shared_store: gcs
+            {{- end }}
         chunk_store_config:
           max_look_back_period: 0s
         table_manager:
@@ -189,7 +204,11 @@ loki-distributed:
           tail_proxy_url: http://{{ include "loki.querierFullname" . }}:3100
 
         compactor:
+          {{- if (eq .Values.customParams.backendStorageType "s3") }}
           shared_store: aws
+          {{- else }}
+          shared_store: gcs
+          {{- end }}
 
         ruler:
           storage:
