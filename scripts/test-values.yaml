@@ -1,0 +1,90 @@
+---
+exposes:
+  domain: gce-rke-demo.its-software-services.com
+  issuer: lets-encrypt-issuer
+  ingressesXXX:
+  - createCert: true
+    name: grfna-applog
+    service:
+      name: grafana
+      port:
+        number: 80
+
+  - createCert: false
+    name: grfna-syslog
+    service:
+      name: grafana
+      port:
+        number: 80
+
+grafana:
+  enabled: false
+  fullnameOverride: grafana-applog-xxx
+  lokiQueryUrl: http://loki-aaa-vm-nonprod-query-frontend:3100
+  image:
+    tag: 7.5.7
+
+promtail:
+  enabled: false
+  customParams:
+    #Loki gateway authe
+    basicAuthUser: willchange111
+    basicAuthPassword: willchangepwd2222
+  config:
+    lokiAddress: https://loki-gateway/loki/api/v1/push
+
+loki-distributed:
+  enabled: true
+  fullnameOverride: loki-applog-xxx
+  
+  ###
+  querier:
+    extraEnv:
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: /etc/secrets/key.json
+    extraVolumes:
+      - name: loki-access-gcs
+        secret:
+          secretName: loki-gcs-bucket-key
+    extraVolumeMounts:
+      - name: loki-access-gcs
+        mountPath: /etc/secrets
+
+  ingester:
+    extraEnv:
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: /etc/secrets/key.json
+    extraVolumes:
+      - name: loki-access-gcs
+        secret:
+          secretName: loki-gcs-bucket-key
+    extraVolumeMounts:
+      - name: loki-access-gcs
+        mountPath: /etc/secrets
+  ###
+
+  gateway:
+    basicAuth:
+      enabled: true
+      username: willchange
+      password: willchangepwd
+
+  customParams:
+    backendStorageType: gcs
+    s3User: willchange
+    s3Password: willchangepwd
+    s3Bucket: willchangepwdbb
+    s3Url: https://bucket.minio-applog-a.svc.cluster.local
+    gcsBucket: loki-syslog
+
+#Loki stack fro cluster container logs
+loki-stack:
+  enabled: false  
+
+  grafana:
+    envRenderSecret:
+      LDAP_ADMIN_USER: "will-change"
+      LDAP_ADMIN_PASSWORD: "will-change"
+
+    image:
+      tag: 7.5.7

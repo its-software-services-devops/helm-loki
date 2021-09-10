@@ -1,0 +1,24 @@
+{{- $domain := .Values.exposes.domain }}
+{{- range .Values.exposes.ingresses }}
+{{- $name := .name }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $name }}-ing
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+spec:
+  tls:
+    - hosts:
+      - {{ $name }}.{{ $domain }}
+      secretName: {{ $name }}-cert
+  rules:
+    - host: {{ $name }}.{{ $domain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: {{ toYaml .service | nindent 16 }}
+{{- end }}
