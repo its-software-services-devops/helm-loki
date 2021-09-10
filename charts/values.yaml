@@ -224,10 +224,6 @@ loki-stack:
   enabled: false  
 
   grafana:
-    envRenderSecret:
-      LDAP_ADMIN_USER: "will-change"
-      LDAP_ADMIN_PASSWORD: "will-change"
-      
     enabled: true
     sidecar:
       datasources:
