@@ -114,7 +114,7 @@ loki-distributed:
 
   loki:    
     image:
-      tag: 2.2.0
+      tag: 2.4.0
     config: |
         auth_enabled: false
         server:
@@ -137,6 +137,8 @@ loki-distributed:
           chunk_encoding: snappy
           chunk_retain_period: 1m
           max_transfer_retries: 0
+          wal:
+            dir: /var/loki/wal
         limits_config:
           enforce_metric_name: false
           reject_old_samples: true
