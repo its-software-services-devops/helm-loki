@@ -33,50 +33,6 @@ grafana:
 ##### Promtail for Syslog purpose
 promtail:
   enabled: false
-  extraArgs: []
-  customParams:
-    basicAuthUser: willchange
-    basicAuthPassword: willchangepwd
-
-  config:
-    lokiAddress: https://xxxxxx/loki/api/v1/push
-    snippets:
-      extraClientConfigs: |
-        basic_auth:
-          username: {{ .Values.customParams.basicAuthUser }}
-          password: {{ .Values.customParams.basicAuthPassword }}
-      scrapeConfigs: |
-        - job_name: syslog
-          syslog:
-            listen_address: 0.0.0.0:1514
-            idle_timeout: 60s
-            label_structured_data: yes
-            labels:
-              job: "syslog"
-          relabel_configs:
-            - source_labels: ['__syslog_message_hostname']
-              target_label: 'host'
-            - source_labels: ['__syslog_message_app_name']
-              target_label: 'app'
-            - source_labels: ['__syslog_message_facility']
-              target_label: 'facility'                
-
-  extraPorts:
-    syslog:
-      name: tcp-syslog
-      containerPort: 1514
-      protocol: TCP
-      service:
-        type: NodePort
-        clusterIP: null
-        port: 1514
-        externalIPs: []
-        nodePort: null
-        annotations: {}
-        labels: {}
-        loadBalancerIP: null
-        loadBalancerSourceRanges: []
-        externalTrafficPolicy: null
 
 #####
 loki-distributed:
