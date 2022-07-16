@@ -3,7 +3,7 @@ entries:
   helm-loki:
   - apiVersion: v2
     appVersion: 1.23.0
-    created: "2022-06-09T10:31:42.17715891Z"
+    created: "2022-07-16T03:46:34.030286517Z"
     dependencies:
     - condition: loki-stack.enabled
       name: loki-stack
@@ -22,7 +22,7 @@ entries:
       repository: https://grafana.github.io/helm-charts/
       version: 6.29.6
     description: A Helm chart wrapper for Loki
-    digest: 2b3e6012d97a2f53dd53b27e29dba97ab0cae5f5bf8d2921369116c949a154d3
+    digest: 6ab054ba3f0139674561af4a72dbfe3ddc314b7480c7bdb03413d4211ff94bf8
     name: helm-loki
     urls:
     - https://its-software-services-devops.github.io/helm-loki/helm-loki-1.1.4.tgz
@@ -235,4 +235,4 @@ entries:
     urls:
     - https://its-software-services-devops.github.io/helm-loki/helm-loki-1.1.0-rc1.tgz
     version: 1.1.0-rc1
-generated: "2022-06-09T10:31:42.154234459Z"
+generated: "2022-07-16T03:46:34.003004471Z"
