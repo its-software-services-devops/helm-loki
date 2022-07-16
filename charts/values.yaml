@@ -174,8 +174,8 @@ loki-distributed:
             kvstore:
               store: memberlist
           rule_path: /tmp/loki/scratch
-          alertmanager_url: https://alertmanager.xx
-          external_url: https://alertmanager.xx    
+          alertmanager_url: {{ .Values.ruler.alertmanager_url }}
+          external_url: {{ .Values.ruler.external_url }}
 
 #####
 loki-stack:
