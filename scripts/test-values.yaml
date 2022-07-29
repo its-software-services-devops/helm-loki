@@ -97,3 +97,4 @@ fluentbit:
   basicAuthUser: "user"
   basicAuthPassword: "password"
   logGatewayHost: "hostname.domain.com"
+  port: 443
