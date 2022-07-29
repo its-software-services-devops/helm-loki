@@ -1,15 +1,18 @@
 dependencies:
 - name: loki-stack
   repository: https://grafana.github.io/helm-charts/
-  version: 2.4.1
+  version: 2.6.4
 - name: loki-distributed
   repository: https://grafana.github.io/helm-charts/
-  version: 0.35.0
+  version: 0.48.4
 - name: promtail
-  repository: https://grafana.github.io/helm-charts//
-  version: 3.6.0
+  repository: https://grafana.github.io/helm-charts/
+  version: 5.1.0
 - name: grafana
   repository: https://grafana.github.io/helm-charts/
-  version: 4.0.0
-digest: sha256:3f435e5e8a5110bd341f52b286c7f5918973741873999bf19516f49a345f2091
-generated: "2021-07-24T18:00:38.9993213+07:00"
+  version: 6.29.6
+- name: fluent-bit
+  repository: https://fluent.github.io/helm-charts
+  version: 0.20.4
+digest: sha256:dcf7387441754f74ca165e781d101d3e35b7ac73871229e2670cd7d893a977f9
+generated: "2022-07-29T08:56:03.4764603+07:00"

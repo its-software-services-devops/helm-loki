@@ -34,7 +34,7 @@ promtail:
     lokiAddress: https://loki-gateway/loki/api/v1/push
 
 loki-distributed:
-  enabled: true
+  enabled: false
   fullnameOverride: loki-applog-xxx
   
   ###
@@ -88,3 +88,12 @@ loki-stack:
 
     image:
       tag: 7.5.7
+
+fluentbit:
+  enabled: true
+  clusterName: "test-cluster"
+  project: "xxxx-test-project"
+  platform: "gke"
+  basicAuthUser: "user"
+  basicAuthPassword: "password"
+  logGatewayHost: "hostname.domain.com"
