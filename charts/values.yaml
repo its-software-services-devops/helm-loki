@@ -34,6 +34,64 @@ grafana:
 promtail:
   enabled: false
 
+fluentbit:
+  enabled: false
+  fullnameOverride: "fluentbit-k8s"
+  logGatewayHost: ""
+  logGatewayURI: /logs-push
+  clusterName: ""
+  project: ""
+  platform: ""
+  basicAuthUser: ""
+  basicAuthPassword: ""
+
+  config:
+    ## https://docs.fluentbit.io/manual/pipeline/inputs
+    inputs: |
+      [INPUT]
+          Name tail
+          Path /var/log/containers/*.log
+          multiline.parser docker, cri
+          Tag kube.*
+          Mem_Buf_Limit 100MB
+          Skip_Long_Lines On
+          Refresh_Interval  5
+          Buffer_Chunk_Size 128k
+          Buffer_Max_Size   4096k
+    ## https://docs.fluentbit.io/manual/pipeline/filters
+    filters: |
+      [FILTER]
+          Name kubernetes
+          Match kube.*
+          Merge_Log On
+          Keep_Log Off
+          Kube_URL         https://kubernetes.default.svc:443
+          Kube_CA_File     /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          Kube_Token_File  /var/run/secrets/kubernetes.io/serviceaccount/token          
+          K8S-Logging.Parser On
+          K8S-Logging.Exclude On
+    ## https://docs.fluentbit.io/manual/pipeline/outputs
+    outputs: |
+      [OUTPUT]
+          Name  http
+          Match *
+          Host  {{ .Values.logGatewayHost }}
+          Port  80
+          URI   {{ .Values.logGatewayURI }}
+          Format json
+          Header  K8S-CLUSTER {{ .Values.clusterName }}
+          Header  K8S-PROJECT {{ .Values.project }}
+          Header  K8S-PLATFORM {{ .Values.platform }}
+          http_User {{ .Values.basicAuthUser }}
+          http_Passwd {{ .Values.basicAuthPassword }}
+    ## https://docs.fluentbit.io/manual/pipeline/parsers
+    customParsers: |
+      [PARSER]
+          Name docker_no_time
+          Format json
+          Time_Keep Off
+          Time_Key time
+          Time_Format %Y-%m-%dT%H:%M:%S.%L
 #####
 loki-distributed:
   fullnameOverride: loki-syslog-log
@@ -174,8 +232,8 @@ loki-distributed:
             kvstore:
               store: memberlist
           rule_path: /tmp/loki/scratch
-          alertmanager_url: https://alertmanager.xx
-          external_url: https://alertmanager.xx    
+          alertmanager_url: {{ .Values.ruler.alertmanager_url }}
+          external_url: {{ .Values.ruler.external_url }}
 
 #####
 loki-stack:
