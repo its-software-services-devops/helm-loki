@@ -85,6 +85,8 @@ fluentbit:
           Header  K8S-PLATFORM {{ .Values.platform }}
           http_User {{ .Values.basicAuthUser }}
           http_Passwd {{ .Values.basicAuthPassword }}
+          tls        On
+          tls.verify Off          
     ## https://docs.fluentbit.io/manual/pipeline/parsers
     customParsers: |
       [PARSER]
