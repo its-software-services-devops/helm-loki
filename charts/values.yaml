@@ -44,6 +44,7 @@ fluentbit:
   platform: ""
   basicAuthUser: ""
   basicAuthPassword: ""
+  port: 443
 
   config:
     ## https://docs.fluentbit.io/manual/pipeline/inputs
@@ -76,7 +77,7 @@ fluentbit:
           Name  http
           Match *
           Host  {{ .Values.logGatewayHost }}
-          Port  80
+          Port  {{ .Values.port }}
           URI   {{ .Values.logGatewayURI }}
           Format json
           Header  K8S-CLUSTER {{ .Values.clusterName }}
