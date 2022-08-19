@@ -44,7 +44,7 @@ fluentbit:
   platform: ""
   basicAuthUser: ""
   basicAuthPassword: ""
-  port: 443
+  port: 5514
 
   config:
     ## https://docs.fluentbit.io/manual/pipeline/inputs
@@ -59,6 +59,7 @@ fluentbit:
           Refresh_Interval  5
           Buffer_Chunk_Size 128k
           Buffer_Max_Size   4096k
+
     ## https://docs.fluentbit.io/manual/pipeline/filters
     filters: |
       [FILTER]
@@ -71,22 +72,39 @@ fluentbit:
           Kube_Token_File  /var/run/secrets/kubernetes.io/serviceaccount/token          
           K8S-Logging.Parser On
           K8S-Logging.Exclude On
+
+      [FILTER]
+          Name                record_modifier
+          Match               *
+          Record hostname     {{ .Values.project }}
+          Record facility     1
+          Record severity     1
+          Record appname      {{ .Values.platform }}:{{ .Values.project }}:{{ .Values.clusterName }}
+          Record procid       1000
+       
     ## https://docs.fluentbit.io/manual/pipeline/outputs
     outputs: |
       [OUTPUT]
-          Name  http
-          Match *
-          Host  {{ .Values.logGatewayHost }}
-          Port  {{ .Values.port }}
-          URI   {{ .Values.logGatewayURI }}
-          Format json
-          Header  K8S-CLUSTER {{ .Values.clusterName }}
-          Header  K8S-PROJECT {{ .Values.project }}
-          Header  K8S-PLATFORM {{ .Values.platform }}
-          http_User {{ .Values.basicAuthUser }}
-          http_Passwd {{ .Values.basicAuthPassword }}
-          tls        On
-          tls.verify Off          
+          name                 syslog
+          match                *
+          
+          # syslog.sec.devops.everapp.io
+          host                 {{ .Values.logGatewayHost }}
+          port                 {{ .Values.port }}
+
+          mode                 udp
+          syslog_format        rfc5424
+          syslog_maxsize       502400
+          syslog_hostname_key  hostname
+          syslog_appname_key   appname
+          syslog_sd_key        kubernetes
+          syslog_message_key   log
+
+          #syslog_severity_key  severity
+          #syslog_facility_key  facility
+          #syslog_procid_key    procid
+          #syslog_msgid_key     msgid
+
     ## https://docs.fluentbit.io/manual/pipeline/parsers
     customParsers: |
       [PARSER]
