@@ -49,16 +49,12 @@ fluentbit:
   luaScripts:
     filters.lua: |
       function transform(tag, timestamp, record)
-          if record["log"] then
-              record["message"] = record["log"]
-          end
-
           if record["output"] then
-              record["message"] = record["output"]
+              record["log"] = record["output"]
           end
 
           if record["msg"] then
-              record["message"] = record["msg"]
+              record["log"] = record["msg"]
           end          
 
           return 1, timestamp, record
