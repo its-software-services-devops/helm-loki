@@ -57,6 +57,10 @@ fluentbit:
               record["message"] = record["output"]
           end
 
+          if record["msg"] then
+              record["message"] = record["msg"]
+          end          
+
           return 1, timestamp, record
       end
 
