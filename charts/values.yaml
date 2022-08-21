@@ -46,6 +46,20 @@ fluentbit:
   basicAuthPassword: ""
   port: 5514
 
+  luaScripts:
+    filters.lua: |
+      function transform(tag, timestamp, record)
+          if record["log"] then
+              record["message"] = record["log"]
+          end
+
+          if record["output"] then
+              record["message"] = record["output"]
+          end
+
+          return 1, timestamp, record
+      end
+
   config:
     ## https://docs.fluentbit.io/manual/pipeline/inputs
     # DO NOT PUT ANY BLANK LINES
@@ -70,7 +84,7 @@ fluentbit:
           Keep_Log Off
           Kube_URL         https://kubernetes.default.svc:443
           Kube_CA_File     /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-          Kube_Token_File  /var/run/secrets/kubernetes.io/serviceaccount/token          
+          Kube_Token_File  /var/run/secrets/kubernetes.io/serviceaccount/token
           K8S-Logging.Parser On
           K8S-Logging.Exclude On
       [FILTER]
@@ -81,6 +95,11 @@ fluentbit:
           Record severity     1
           Record appname      {{ .Values.platform }}:{{ .Values.project }}:{{ .Values.clusterName }}
           Record procid       1000
+      [FILTER]
+          name                  lua
+          match                 *
+          script                /fluent-bit/scripts/filters.lua
+          call                  transform
     ## https://docs.fluentbit.io/manual/pipeline/outputs
     # DO NOT PUT ANY BLANK LINES
     outputs: |
